@@ -41,6 +41,7 @@ jobs:
             --entry-point submitAsyncAction \
             --trigger-http \
             --allow-unauthenticated \
+            --set-env-vars SSFS_SERVICE_CALLBACK_URL=https://ssfs-ethan-oct16.exelement.io/submitAsyncActionService,debug_logs_on=on \
             --project $PROJECT_ID
       
       - name: Show function URL
