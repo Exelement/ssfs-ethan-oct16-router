@@ -1,0 +1,52 @@
+name: Deploy Cloud Function
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  PROJECT_ID: ssfs-202408
+  FUNCTION_NAME: ssfs-ethan-oct16-router
+  REGION: europe-north1
+
+jobs:
+  deploy:
+    name: Deploy to Cloud Functions
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: read
+      id-token: write
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+      
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+      
+      - name: Deploy Cloud Function (Gen 2)
+        run: |
+          gcloud functions deploy $FUNCTION_NAME \
+            --gen2 \
+            --runtime nodejs20 \
+            --region $REGION \
+            --source . \
+            --entry-point handler \
+            --trigger-http \
+            --allow-unauthenticated \
+            --project $PROJECT_ID
+      
+      - name: Show function URL
+        run: |
+          gcloud functions describe $FUNCTION_NAME \
+            --gen2 \
+            --region $REGION \
+            --project $PROJECT_ID \
+            --format 'value(serviceConfig.uri)'
