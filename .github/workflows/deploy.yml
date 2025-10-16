@@ -38,7 +38,7 @@ jobs:
             --runtime nodejs20 \
             --region $REGION \
             --source . \
-            --entry-point handler \
+            --entry-point submitAsyncAction \
             --trigger-http \
             --allow-unauthenticated \
             --project $PROJECT_ID
